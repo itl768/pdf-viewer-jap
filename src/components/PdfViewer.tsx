@@ -10,6 +10,7 @@ import {
   Card,
   Col,
   Input,
+  InputNumber,
   List,
   Row,
   Tag,
@@ -29,7 +30,7 @@ export const PdfViewer: React.FC = () => {
 
   const [pageNumberInit, setPageNumber] = useState(1);
   const [selectedLocations, setSelectedLocations] = useState<
-    { pageNumber: number; pageX: number; pageY: number; label: string }[]
+    { pageNumber: number; pageX: number; pageY: number; label: string; fontSize:number |null; }[]
   >([]);
   const [numberOfpages, setNumberOfpages] = useState(0);
   const [pdfFile, setPdfFile] = useState(null);
@@ -37,9 +38,9 @@ export const PdfViewer: React.FC = () => {
   const checkKey = (e: any) => {
     e = e || window.event;
     if (e.keyCode == "37") {
-      if (pageNumberInit !== 1) setPageNumber(pageNumberInit - 1);
+      if (pageNumberInit > 1) setPageNumber(pageNumberInit - 1);
     } else if (e.keyCode == "39") {
-      if (pageNumberInit !== numberOfpages) setPageNumber(pageNumberInit - 1);
+      if (pageNumberInit < numberOfpages)
       setPageNumber(pageNumberInit + 1);
     }
   };
@@ -53,7 +54,7 @@ export const PdfViewer: React.FC = () => {
     const { pageX, pageY } = event;
     setSelectedLocations([
       ...selectedLocations,
-      { pageX, pageY, pageNumber: pageNumberInit, label: "" },
+      { pageX, pageY, pageNumber: pageNumberInit-1, label: "", fontSize:11 },
     ]);
   };
 
@@ -67,6 +68,17 @@ export const PdfViewer: React.FC = () => {
 
     setSelectedLocations(updatedLocations);
   };
+    const addFontSizeToElement = (fontSize: number|null, index: number) => {
+    console.log('fontSize :', fontSize);
+      const updatedLocations = [...selectedLocations];
+
+      updatedLocations[index] = {
+        ...updatedLocations[index],
+        fontSize: fontSize,
+      };
+
+      setSelectedLocations(updatedLocations);
+    };
 
   const removeElement = (index: number) => {
     const updatedLocations = [...selectedLocations];
@@ -81,7 +93,10 @@ export const PdfViewer: React.FC = () => {
     selectedLocations.forEach((item) => {
       initString =
         initString +
-        `${item.pageX};${item.pageY};${item.pageNumber};`+"${"+item.label+"};11;Calibri|";
+        `${item.pageX};${item.pageY};${item.pageNumber};` +
+        '${record.getCellValue("' +
+        item.label +
+        '").name};'+item.fontSize+';Calibri|';
     });
     return initString;
   };
@@ -135,12 +150,23 @@ export const PdfViewer: React.FC = () => {
                   dataSource={selectedLocations}
                   renderItem={(item, index) => (
                     <List.Item>
-                      <Col span={20}>
+                      <Col span={16}>
                         <Input
                           value={item.label}
                           placeholder="add key"
                           onChange={(e) =>
                             addLabelToElement(e.target.value, index)
+                          }
+                        />
+                      </Col>
+                      <Col span={4}>
+                        <InputNumber
+                        max={50}
+                          value={item.fontSize}
+                          placeholder="fontSize"
+                          defaultValue={11}
+                          onChange={(e) =>
+                            addFontSizeToElement(e, index)
                           }
                         />
                       </Col>
