@@ -181,7 +181,7 @@ export const PdfViewer: React.FC = () => {
         </>
       ) : (
         <Row justify={"center"}>
-          <Col span={10}>
+          <Col span={11}>
             <Document file={pdfFile} onLoadSuccess={onDocumentLoadSuccess}>
               <Page
                 pageNumber={pageNumberInit}
@@ -190,7 +190,8 @@ export const PdfViewer: React.FC = () => {
               />
             </Document>
           </Col>
-          <Col span={12}>
+          <Col span={2}></Col>
+          <Col span={11}>
             <Row style={{ marginBottom: 36 }}>
               <Col span={24}>
                 <List
@@ -200,7 +201,7 @@ export const PdfViewer: React.FC = () => {
                   dataSource={selectedLocations}
                   renderItem={(item, index) => (
                     <List.Item>
-                      <Col span={14}>
+                      <Col span={8}>
                         <Input
                           value={item.label}
                           placeholder="add key"
@@ -209,7 +210,7 @@ export const PdfViewer: React.FC = () => {
                           }
                         />
                       </Col>
-                      <Col span={2}>
+                      <Col span={4}>
                         <Input
                           value={String(item.pageNumber)}
                           placeholder="pageRange"
@@ -228,7 +229,7 @@ export const PdfViewer: React.FC = () => {
                         />
                       </Col>
 
-                      <Col span={4}>
+                      <Col  style={{marginLeft:12}} span={6}>
                         <Checkbox
                           checked={item.checked}
                           onChange={(e) => addCheckBox(e, index)}
@@ -236,7 +237,7 @@ export const PdfViewer: React.FC = () => {
                           Is string
                         </Checkbox>
                       </Col>
-                      <Col style={{ marginLeft: 2 }} span={2}>
+                      <Col   span={2}>
                         <CloseOutlined onClick={() => removeElement(index)} />
                       </Col>
                     </List.Item>
