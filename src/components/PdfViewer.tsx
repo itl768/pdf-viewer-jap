@@ -8,6 +8,7 @@ import {
 import {
   Button,
   Card,
+  Checkbox,
   Col,
   Input,
   InputNumber,
@@ -30,18 +31,25 @@ export const PdfViewer: React.FC = () => {
 
   const [pageNumberInit, setPageNumber] = useState(1);
   const [selectedLocations, setSelectedLocations] = useState<
-    { pageNumber: number; pageX: number; pageY: number; label: string; fontSize:number |null; }[]
+    {
+      pageNumber: string |null;
+      pageX: number;
+      pageY: number;
+      label: string;
+      fontSize: number | null;
+      checked: boolean;
+    }[]
   >([]);
   const [numberOfpages, setNumberOfpages] = useState(0);
   const [pdfFile, setPdfFile] = useState(null);
+  // const [checked, setChecked] = useState(true);
 
   const checkKey = (e: any) => {
     e = e || window.event;
     if (e.keyCode == "37") {
       if (pageNumberInit > 1) setPageNumber(pageNumberInit - 1);
     } else if (e.keyCode == "39") {
-      if (pageNumberInit < numberOfpages)
-      setPageNumber(pageNumberInit + 1);
+      if (pageNumberInit < numberOfpages) setPageNumber(pageNumberInit + 1);
     }
   };
   document.onkeydown = checkKey;
@@ -50,16 +58,23 @@ export const PdfViewer: React.FC = () => {
     setPageNumber(1);
   };
 
-  const handleClick = (event: { pageX: any; pageY: any; pageNumber: any }) => {
+  const handleClick = (event: { pageX: any; pageY: any }) => {
     const { pageX, pageY } = event;
     setSelectedLocations([
       ...selectedLocations,
-      { pageX, pageY, pageNumber: pageNumberInit-1, label: "", fontSize:11 },
+      {
+        pageX,
+        pageY,
+        pageNumber: String(pageNumberInit - 1),
+        label: "",
+        fontSize: 11,
+        checked: true,
+      },
     ]);
   };
 
   const addLabelToElement = (label: string, index: number) => {
-    const updatedLocations = [...selectedLocations]; 
+    const updatedLocations = [...selectedLocations];
 
     updatedLocations[index] = {
       ...updatedLocations[index],
@@ -68,44 +83,80 @@ export const PdfViewer: React.FC = () => {
 
     setSelectedLocations(updatedLocations);
   };
-    const addFontSizeToElement = (fontSize: number|null, index: number) => {
-    console.log('fontSize :', fontSize);
+  const addCheckBox = (e: any, index: number) => {
+    const updatedLocations = [...selectedLocations];
+
+    updatedLocations[index] = {
+      ...updatedLocations[index],
+      checked: e.target.checked,
+    };
+
+    setSelectedLocations(updatedLocations);
+  };
+
+  
+
+    const addPageRangeToElement = (pageRange: string | null, index: number) => {
       const updatedLocations = [...selectedLocations];
 
       updatedLocations[index] = {
         ...updatedLocations[index],
-        fontSize: fontSize,
+        pageNumber: pageRange,
       };
 
       setSelectedLocations(updatedLocations);
     };
+  const addFontSizeToElement = (fontSize: number | null, index: number) => {
+    console.log("fontSize :", fontSize);
+    const updatedLocations = [...selectedLocations];
+
+    updatedLocations[index] = {
+      ...updatedLocations[index],
+      fontSize: fontSize,
+    };
+
+    setSelectedLocations(updatedLocations);
+  };
 
   const removeElement = (index: number) => {
     const updatedLocations = [...selectedLocations];
 
-    updatedLocations.splice(index, 1); 
+    updatedLocations.splice(index, 1);
 
-    setSelectedLocations(updatedLocations); 
+    setSelectedLocations(updatedLocations);
   };
 
   const generateText = () => {
     let initString = "";
     selectedLocations.forEach((item) => {
-      initString =
-        initString +
-        `${item.pageX};${item.pageY};${item.pageNumber};` +
-        '${record.getCellValue("' +
-        item.label +
-        '").name};'+item.fontSize+';Calibri|';
+      if (item.checked) {
+        initString =
+          initString +
+          `${item.pageX};${item.pageY};${item.pageNumber};` +
+          '${record.getCellValue("' +
+          item.label +
+          '").name};' +
+          item.fontSize +
+          ";Calibri|";
+      } else {
+        initString =
+          initString +
+          `${item.pageX};${item.pageY};${item.pageNumber};` +
+          '${record.getCellValue("' +
+          item.label +
+          '")};' +
+          item.fontSize +
+          ";Calibri|";
+      }
     });
     return initString;
   };
 
-  const handlePdfUpload =  (file: Blob) => {
-    const fileReader:any = new FileReader();
+  const handlePdfUpload = (file: Blob) => {
+    const fileReader: any = new FileReader();
     fileReader.onload = async () => {
-     await  setPdfFile(fileReader.result);
-     setIsPdfAvailable(true);
+      await setPdfFile(fileReader.result);
+      setIsPdfAvailable(true);
       message.success("PDF uploaded successfully!");
     };
     fileReader.readAsDataURL(file);
@@ -130,7 +181,7 @@ export const PdfViewer: React.FC = () => {
         </>
       ) : (
         <Row justify={"center"}>
-          <Col span={11}>
+          <Col span={10}>
             <Document file={pdfFile} onLoadSuccess={onDocumentLoadSuccess}>
               <Page
                 pageNumber={pageNumberInit}
@@ -139,8 +190,7 @@ export const PdfViewer: React.FC = () => {
               />
             </Document>
           </Col>
-          <Col span={2}></Col>
-          <Col span={11}>
+          <Col span={12}>
             <Row style={{ marginBottom: 36 }}>
               <Col span={24}>
                 <List
@@ -150,7 +200,7 @@ export const PdfViewer: React.FC = () => {
                   dataSource={selectedLocations}
                   renderItem={(item, index) => (
                     <List.Item>
-                      <Col span={16}>
+                      <Col span={14}>
                         <Input
                           value={item.label}
                           placeholder="add key"
@@ -159,18 +209,34 @@ export const PdfViewer: React.FC = () => {
                           }
                         />
                       </Col>
-                      <Col span={4}>
-                        <InputNumber
-                        max={50}
-                          value={item.fontSize}
-                          placeholder="fontSize"
-                          defaultValue={11}
+                      <Col span={2}>
+                        <Input
+                          value={String(item.pageNumber)}
+                          placeholder="pageRange"
                           onChange={(e) =>
-                            addFontSizeToElement(e, index)
+                            addPageRangeToElement(e.target.value, index)
                           }
                         />
                       </Col>
-                      <Col style={{ marginLeft: 4 }} span={4}>
+                      <Col span={4}>
+                        <InputNumber
+                          max={50}
+                          value={item.fontSize}
+                          placeholder="fontSize"
+                          defaultValue={11}
+                          onChange={(e) => addFontSizeToElement(e, index)}
+                        />
+                      </Col>
+
+                      <Col span={4}>
+                        <Checkbox
+                          checked={item.checked}
+                          onChange={(e) => addCheckBox(e, index)}
+                        >
+                          Is string
+                        </Checkbox>
+                      </Col>
+                      <Col style={{ marginLeft: 2 }} span={2}>
                         <CloseOutlined onClick={() => removeElement(index)} />
                       </Col>
                     </List.Item>
