@@ -1,6 +1,7 @@
 {
   "name": "pdf-viewer",
   "version": "0.1.0",
+  "homepage": "https://itl768.github.io/pdf-viewer-jap",
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^5.1.4",
