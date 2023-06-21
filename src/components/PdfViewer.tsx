@@ -180,17 +180,18 @@ export const PdfViewer: React.FC = () => {
           </div>
         </>
       ) : (
-        <Row justify={"center"}>
+        <Row justify={"start"}>
           <Col span={11}>
             <Document
               onClick={handleClick}
               file={pdfFile}
               onLoadSuccess={onDocumentLoadSuccess}
+              
             >
               <Page
-                width={600}
+              
                 pageNumber={pageNumberInit}
-                renderAnnotationLayer={false}
+                renderAnnotationLayer={true}
               />
             </Document>
           </Col>
