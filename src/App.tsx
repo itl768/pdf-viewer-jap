@@ -1,26 +1,89 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import {
+  DesktopOutlined,
+  FileOutlined,
+  PieChartOutlined,
+  TeamOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
+import type { MenuProps } from "antd";
+import { Breadcrumb, Layout, Menu, theme } from "antd";
+import { PdfViewer } from "./components/PdfViewer";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const { Header, Content, Footer, Sider } = Layout;
+
+type MenuItem = Required<MenuProps>["items"][number];
+
+function getItem(
+  label: React.ReactNode,
+  key: React.Key,
+  icon?: React.ReactNode,
+  children?: MenuItem[]
+): MenuItem {
+  return {
+    key,
+    icon,
+    children,
+    label,
+  } as MenuItem;
 }
+
+const items: MenuItem[] = [
+  getItem("Option 1", "PAGE1", <PieChartOutlined />),
+  // getItem("Option 2", "PAGE2", <DesktopOutlined />),
+];
+
+const App: React.FC = () => {
+  const [collapsed, setCollapsed] = useState(false);
+  const [selectedPage, setSelectedPage] = useState("PAGE1");
+  const {
+    token: { colorBgContainer },
+  } = theme.useToken();
+
+
+  const renderLayout=()=>{
+    switch (selectedPage) {
+      case "PAGE1":
+        return <PdfViewer/>;
+      case "PAGE2":
+        return <></>;
+    }
+  }
+  return (
+    <Layout style={{ minHeight: "100vh" }}>
+      <Sider
+        collapsible
+        collapsed={collapsed}
+        onCollapse={(value) => setCollapsed(value)}
+      >
+        <div className="demo-logo-vertical" />
+        <Menu
+          theme="dark"
+          defaultSelectedKeys={["PAGE1"]}
+          mode="inline"
+          items={items}
+          onClick={(e) => setSelectedPage(e.key)}
+        />
+      </Sider>
+      <Layout>
+        {/* <Header style={{ padding: 0, background: colorBgContainer }} /> */}
+        <Content style={{ margin: "0 16px" }}>
+          <div
+            style={{
+              padding: 24,
+              minHeight: 360,
+              background: colorBgContainer,
+            }}
+          >
+            {renderLayout()}
+          </div>
+        </Content>
+        <Footer style={{ textAlign: "center" }}>
+          Ant Design ©2023 Created by Ant UED
+        </Footer>
+      </Layout>
+    </Layout>
+  );
+};
 
 export default App;
