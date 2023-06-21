@@ -182,11 +182,15 @@ export const PdfViewer: React.FC = () => {
       ) : (
         <Row justify={"center"}>
           <Col span={11}>
-            <Document file={pdfFile} onLoadSuccess={onDocumentLoadSuccess}>
+            <Document
+              onClick={handleClick}
+              file={pdfFile}
+              onLoadSuccess={onDocumentLoadSuccess}
+            >
               <Page
+                width={600}
                 pageNumber={pageNumberInit}
                 renderAnnotationLayer={false}
-                onClick={handleClick}
               />
             </Document>
           </Col>
@@ -194,55 +198,57 @@ export const PdfViewer: React.FC = () => {
           <Col span={11}>
             <Row style={{ marginBottom: 36 }}>
               <Col span={24}>
-                <List
-                  header={<div>Selected locations</div>}
-                  footer={<div>Footer</div>}
-                  bordered
-                  dataSource={selectedLocations}
-                  renderItem={(item, index) => (
-                    <List.Item>
-                      <Col span={8}>
-                        <Input
-                          value={item.label}
-                          placeholder="add key"
-                          onChange={(e) =>
-                            addLabelToElement(e.target.value, index)
-                          }
-                        />
-                      </Col>
-                      <Col span={4}>
-                        <Input
-                          value={String(item.pageNumber)}
-                          placeholder="pageRange"
-                          onChange={(e) =>
-                            addPageRangeToElement(e.target.value, index)
-                          }
-                        />
-                      </Col>
-                      <Col span={4}>
-                        <InputNumber
-                          max={50}
-                          value={item.fontSize}
-                          placeholder="fontSize"
-                          defaultValue={11}
-                          onChange={(e) => addFontSizeToElement(e, index)}
-                        />
-                      </Col>
+                <div style={{ overflow: "scroll", maxHeight: "60vh" }}>
+                  <List
+                    header={<div>Selected locations</div>}
+                    footer={<div>Footer</div>}
+                    bordered
+                    dataSource={selectedLocations}
+                    renderItem={(item, index) => (
+                      <List.Item>
+                        <Col span={8}>
+                          <Input
+                            value={item.label}
+                            placeholder="add key"
+                            onChange={(e) =>
+                              addLabelToElement(e.target.value, index)
+                            }
+                          />
+                        </Col>
+                        <Col span={4}>
+                          <Input
+                            value={String(item.pageNumber)}
+                            placeholder="pageRange"
+                            onChange={(e) =>
+                              addPageRangeToElement(e.target.value, index)
+                            }
+                          />
+                        </Col>
+                        <Col span={4}>
+                          <InputNumber
+                            max={50}
+                            value={item.fontSize}
+                            placeholder="fontSize"
+                            defaultValue={11}
+                            onChange={(e) => addFontSizeToElement(e, index)}
+                          />
+                        </Col>
 
-                      <Col  style={{marginLeft:12}} span={6}>
-                        <Checkbox
-                          checked={item.checked}
-                          onChange={(e) => addCheckBox(e, index)}
-                        >
-                          Is string
-                        </Checkbox>
-                      </Col>
-                      <Col   span={2}>
-                        <CloseOutlined onClick={() => removeElement(index)} />
-                      </Col>
-                    </List.Item>
-                  )}
-                />
+                        <Col style={{ marginLeft: 12 }} span={6}>
+                          <Checkbox
+                            checked={item.checked}
+                            onChange={(e) => addCheckBox(e, index)}
+                          >
+                            Is string
+                          </Checkbox>
+                        </Col>
+                        <Col span={2}>
+                          <CloseOutlined onClick={() => removeElement(index)} />
+                        </Col>
+                      </List.Item>
+                    )}
+                  />
+                </div>
               </Col>
             </Row>
             <Row justify={"center"}>

@@ -34,7 +34,7 @@ const items: MenuItem[] = [
 ];
 
 const App: React.FC = () => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const [selectedPage, setSelectedPage] = useState("PAGE1");
   const {
     token: { colorBgContainer },
@@ -51,9 +51,10 @@ const App: React.FC = () => {
   }
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      <Sider
+      {/* <Sider
         collapsible
         collapsed={collapsed}
+        
         onCollapse={(value) => setCollapsed(value)}
       >
         <div className="demo-logo-vertical" />
@@ -64,7 +65,7 @@ const App: React.FC = () => {
           items={items}
           onClick={(e) => setSelectedPage(e.key)}
         />
-      </Sider>
+      </Sider> */}
       <Layout>
         {/* <Header style={{ padding: 0, background: colorBgContainer }} /> */}
         <Content style={{ margin: "0 16px" }}>
