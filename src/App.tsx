@@ -50,7 +50,7 @@ const App: React.FC = () => {
     }
   }
   return (
-    <Layout style={{ minHeight: "100vh" }}>
+    <>
       {/* <Sider
         collapsible
         collapsed={collapsed}
@@ -66,24 +66,21 @@ const App: React.FC = () => {
           onClick={(e) => setSelectedPage(e.key)}
         />
       </Sider> */}
-      <Layout>
-        {/* <Header style={{ padding: 0, background: colorBgContainer }} /> */}
-        <Content style={{ margin: "0 16px" }}>
-          <div
-            style={{
-              padding: 24,
-              minHeight: 360,
-              background: colorBgContainer,
-            }}
-          >
-            {renderLayout()}
-          </div>
-        </Content>
-        <Footer style={{ textAlign: "center" }}>
-          Ant Design ©2023 Created by Ant UED
-        </Footer>
-      </Layout>
-    </Layout>
+      {/* <Header style={{ padding: 0, background: colorBgContainer }} /> */}
+      <Content>
+        <div
+          style={{
+            minHeight: 360,
+            background: colorBgContainer,
+          }}
+        >
+          {renderLayout()}
+        </div>
+      </Content>
+      <Footer style={{ textAlign: "center" }}>
+        Ant Design ©2023 Created by Ant UED
+      </Footer>
+    </>
   );
 };
 

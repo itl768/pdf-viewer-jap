@@ -188,7 +188,6 @@ export const PdfViewer: React.FC = () => {
               onLoadSuccess={onDocumentLoadSuccess}
             >
               <Page
-                width={600}
                 pageNumber={pageNumberInit}
                 renderAnnotationLayer={false}
               />
