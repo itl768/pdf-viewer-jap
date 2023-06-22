@@ -1,12 +1,8 @@
 import {
   CloseOutlined,
   CopyOutlined,
-  InboxOutlined,
-  SmileFilled,
-  SmileOutlined,
 } from "@ant-design/icons";
 import {
-  Button,
   Card,
   Checkbox,
   Col,
@@ -14,12 +10,11 @@ import {
   InputNumber,
   List,
   Row,
-  Tag,
   Typography,
   Upload,
   message,
 } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/esm/Page/TextLayer.css";
 
@@ -68,7 +63,7 @@ export const PdfViewer: React.FC = () => {
         pageNumber: String(pageNumberInit - 1),
         label: "",
         fontSize: 11,
-        checked: true,
+        checked: false,
       },
     ]);
   };
@@ -133,18 +128,18 @@ export const PdfViewer: React.FC = () => {
         initString =
           initString +
           `${item.pageX};${item.pageY};${item.pageNumber};` +
-          '${record.getCellValue("' +
+          '${getRecordValue(record.getCellValue("' +
           item.label +
-          '").name};' +
+          '"), selectValue};' +
           item.fontSize +
           ";Calibri|";
       } else {
         initString =
           initString +
           `${item.pageX};${item.pageY};${item.pageNumber};` +
-          '${record.getCellValue("' +
+          '${getRecordValue(record.getCellValue("' +
           item.label +
-          '")};' +
+          '"))};' +
           item.fontSize +
           ";Calibri|";
       }
@@ -240,7 +235,7 @@ export const PdfViewer: React.FC = () => {
                             checked={item.checked}
                             onChange={(e) => addCheckBox(e, index)}
                           >
-                            Is string
+                            Is select value
                           </Checkbox>
                         </Col>
                         <Col span={2}>
