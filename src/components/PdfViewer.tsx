@@ -130,7 +130,7 @@ export const PdfViewer: React.FC = () => {
           `${item.pageX};${item.pageY};${item.pageNumber};` +
           '${getRecordValue(record.getCellValue("' +
           item.label +
-          '"), selectValue)};' +
+          '"), selectValue};' +
           item.fontSize +
           ";Calibri|";
       } else {
