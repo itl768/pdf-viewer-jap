@@ -1,8 +1,12 @@
 import {
   CloseOutlined,
   CopyOutlined,
+  InboxOutlined,
+  SmileFilled,
+  SmileOutlined,
 } from "@ant-design/icons";
 import {
+  Button,
   Card,
   Checkbox,
   Col,
@@ -10,11 +14,12 @@ import {
   InputNumber,
   List,
   Row,
+  Tag,
   Typography,
   Upload,
   message,
 } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/esm/Page/TextLayer.css";
 
@@ -38,7 +43,26 @@ export const PdfViewer: React.FC = () => {
   const [numberOfpages, setNumberOfpages] = useState(0);
   const [pdfFile, setPdfFile] = useState(null);
   // const [checked, setChecked] = useState(true);
+  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
+  const [showCursor, setShowCursor] = useState(false);
 
+  const handleMouseMove = (event:any) => {
+    setCursorPosition({ x: event.clientX, y: event.clientY });
+  };
+
+  const handleMouseEnter = () => {
+    setShowCursor(true);
+  };
+
+  const handleMouseLeave = () => {
+    setShowCursor(false);
+  };
+
+  const boxRef = useRef(null);
+
+  useEffect(() => {
+    console.log("boxRef :", boxRef);
+  }, []);
   const checkKey = (e: any) => {
     e = e || window.event;
     if (e.keyCode == "37") {
@@ -48,8 +72,15 @@ export const PdfViewer: React.FC = () => {
     }
   };
   document.onkeydown = checkKey;
-  const onDocumentLoadSuccess = ({ numPages }: any) => {
-    setNumberOfpages(numPages);
+  const onDocumentLoadSuccess = async (pdf: any) => {
+      const page = await pdf.getPage(pageNumberInit);
+      console.log('page :', page);
+
+    //  const { view } = page;
+    //  const { startX, startY } = view;
+
+    //  console.log("Starting position coordinates:", startX, startY);
+    setNumberOfpages(pdf?.numPages);
     setPageNumber(1);
   };
 
@@ -63,7 +94,7 @@ export const PdfViewer: React.FC = () => {
         pageNumber: String(pageNumberInit - 1),
         label: "",
         fontSize: 11,
-        checked: false,
+        checked: true,
       },
     ]);
   };
@@ -128,18 +159,18 @@ export const PdfViewer: React.FC = () => {
         initString =
           initString +
           `${item.pageX};${item.pageY};${item.pageNumber};` +
-          '${getRecordValue(record.getCellValue("' +
+          '${record.getCellValue("' +
           item.label +
-          '"), selectValue)};' +
+          '").name};' +
           item.fontSize +
           ";Calibri|";
       } else {
         initString =
           initString +
           `${item.pageX};${item.pageY};${item.pageNumber};` +
-          '${getRecordValue(record.getCellValue("' +
+          '${record.getCellValue("' +
           item.label +
-          '"))};' +
+          '")};' +
           item.fontSize +
           ";Calibri|";
       }
@@ -177,18 +208,31 @@ export const PdfViewer: React.FC = () => {
       ) : (
         <Row justify={"start"}>
           <Col span={11}>
-            <Document
-              onClick={handleClick}
-              file={pdfFile}
-              onLoadSuccess={onDocumentLoadSuccess}
-              
+            <div
+              onMouseMove={handleMouseMove}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+              style={{ position: "relative",cursor:'none' }}
             >
-              <Page
+              <Document
               
-                pageNumber={pageNumberInit}
-                renderAnnotationLayer={true}
-              />
-            </Document>
+                onClick={handleClick}
+                file={pdfFile}
+                onLoadSuccess={onDocumentLoadSuccess}
+              >
+                <Page
+                  canvasRef={boxRef}
+                  pageNumber={pageNumberInit}
+                  renderAnnotationLayer={true}
+                />
+              </Document>
+              {showCursor && (
+                <div
+                  className="small-box-cursor"
+                  style={{ top: cursorPosition.y, left: cursorPosition.x }}
+                />
+              )}
+            </div>
           </Col>
           <Col span={2}></Col>
           <Col span={11}>
@@ -235,7 +279,7 @@ export const PdfViewer: React.FC = () => {
                             checked={item.checked}
                             onChange={(e) => addCheckBox(e, index)}
                           >
-                            Is select value
+                            Is string
                           </Checkbox>
                         </Col>
                         <Col span={2}>
