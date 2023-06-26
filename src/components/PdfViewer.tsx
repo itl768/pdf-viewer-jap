@@ -38,7 +38,19 @@ export const PdfViewer: React.FC = () => {
   const [numberOfpages, setNumberOfpages] = useState(0);
   const [pdfFile, setPdfFile] = useState(null);
   // const [checked, setChecked] = useState(true);
+  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
+    const [showCursor, setShowCursor] = useState(false);
+const handleMouseMove = (event: any) => {
+  setCursorPosition({ x: event.clientX, y: event.clientY });
+};
 
+const handleMouseEnter = () => {
+  setShowCursor(true);
+};
+
+const handleMouseLeave = () => {
+  setShowCursor(false);
+};
   const checkKey = (e: any) => {
     e = e || window.event;
     if (e.keyCode == "37") {
@@ -177,18 +189,29 @@ export const PdfViewer: React.FC = () => {
       ) : (
         <Row justify={"start"}>
           <Col span={11}>
-            <Document
-              onClick={handleClick}
-              file={pdfFile}
-              onLoadSuccess={onDocumentLoadSuccess}
-              
+            <div
+              onMouseMove={handleMouseMove}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+              style={{ position: "relative", cursor: "none" }}
             >
-              <Page
-              
-                pageNumber={pageNumberInit}
-                renderAnnotationLayer={true}
-              />
-            </Document>
+              <Document
+                onClick={handleClick}
+                file={pdfFile}
+                onLoadSuccess={onDocumentLoadSuccess}
+              >
+                <Page
+                  pageNumber={pageNumberInit}
+                  renderAnnotationLayer={true}
+                />
+              </Document>
+              {showCursor && (
+                <div
+                  className="small-box-cursor"
+                  style={{ top: cursorPosition.y, left: cursorPosition.x }}
+                />
+              )}
+            </div>
           </Col>
           <Col span={2}></Col>
           <Col span={11}>
